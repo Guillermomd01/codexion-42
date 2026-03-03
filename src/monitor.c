@@ -47,6 +47,6 @@ void	*monitor_routine(void *arg)
 		if (data->n_compiles != -1 && all_done)
 			return (data->sim_finished = 1, pthread_mutex_unlock(&data->lock), NULL);
 		pthread_mutex_unlock(&data->lock);
-		usleep(1000);
+		usleep(500);
 	}
 }
