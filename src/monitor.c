@@ -1,7 +1,21 @@
 #include "codexion.h"
 
 
+static void	stop_simulation(t_data *data)
+{
+	int	j;
 
+	pthread_mutex_lock(&data->lock);
+	data->sim_finished = 1;
+	pthread_mutex_unlock(&data->lock);
+	j = -1;
+	while (++j < data->n_coders)
+	{
+		pthread_mutex_lock(&data->dongle[j].lock);
+		pthread_cond_broadcast(&data->dongle[j].cond);
+		pthread_mutex_unlock(&data->dongle[j].lock);
+	}
+}
 static int	is_dead(t_coder *coder, t_data *data)
 {
 	pthread_mutex_lock(&coder->lock);
@@ -11,13 +25,8 @@ static int	is_dead(t_coder *coder, t_data *data)
 		printf("%lld %d burned out\n",
 			get_time_in_ms() - data->start, coder->id + 1);
 		pthread_mutex_unlock(&data->write_lock);
-		pthread_mutex_lock(&data->lock);
-		data->sim_finished = 1;
-		pthread_mutex_unlock(&data->lock);
+		stop_simulation(data);
 		pthread_mutex_unlock(&coder->lock);
-		int j = -1;
-        while (++j < data->n_coders)
-            pthread_cond_broadcast(&data->dongle[j].cond);
 		return (1);
 	}
 	pthread_mutex_unlock(&coder->lock);
