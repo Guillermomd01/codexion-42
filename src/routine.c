@@ -22,7 +22,7 @@ void    coder_routine(t_coder *coder)
     coder->last_compile = coder->data->start;
     pthread_mutex_unlock(&coder->lock);
     if (coder->id % 2 != 0)
-        ft_usleep(10, coder->data);
+        ft_usleep(50, coder->data);
     while (is_finished(coder))
     {
         /*pthread_mutex_lock(&coder->lock);
