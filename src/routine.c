@@ -25,13 +25,13 @@ void    coder_routine(t_coder *coder)
         ft_usleep(50, coder->data);
     while (is_finished(coder))
     {
-        /*pthread_mutex_lock(&coder->lock);
+        pthread_mutex_lock(&coder->lock);
         if (coder->n_compiles == coder->data->n_compiles)
         {
             pthread_mutex_unlock(&coder->lock);
-            return;
+            break;
         }
-        pthread_mutex_unlock(&coder->lock);*/
+        pthread_mutex_unlock(&coder->lock);
         compiling_step(coder);
         if (!is_finished(coder))
             break;
