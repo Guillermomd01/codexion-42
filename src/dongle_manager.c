@@ -61,12 +61,6 @@ void	take_dongles(t_coder *coder)
     t_dongle *first;
     t_dongle *second;
 
-	if (coder->ld == coder->rd)
-    {
-        request_dongle(coder->ld, coder);
-        return;
-    }
-
     if (coder->ld->id < coder->rd->id)
     {
         first = coder->ld;
