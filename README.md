@@ -46,5 +46,5 @@ La implementación utiliza las primitivas de la librería `pthread` para coordin
 ### Uso de IA
 Se ha utilizado inteligencia artificial generativa como herramienta de apoyo en las siguientes tareas:
 * **Depuración de Deadlocks:** Análisis de trazas de Helgrind para identificar bloqueos circulares.
-* **Optimización de Estructuras:** Mejora en la implementación del montículo binario.
+* **Ayuda en README:** Ayuda en la creación y optimizacion del README.
 * **Refactorización:** Organización modular del código.
