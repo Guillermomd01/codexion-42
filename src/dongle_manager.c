@@ -3,37 +3,41 @@
 
 
 #include "codexion.h"
+static int	can_take(t_dongle *dongle, t_coder *coder)
+{
+	long	now;
 
+	now = get_time_in_ms();
+	if (dongle->heap_len > 0 && dongle->heap[0] == coder && 
+		dongle->available && now >= dongle->next_time_available)
+		return (1);
+	return (0);
+}
 
 // 2. Individual logic for requesting a dongle
 void	request_dongle(t_dongle *dongle, t_coder *coder)
 {
-	long long now;
-
 	pthread_mutex_lock(&dongle->lock);
 	coder->request_time = get_time_in_ms();
 	heap_push(dongle, coder);
-	while (1)
+	while (!can_take(dongle, coder) && is_finished(coder))
 	{
-		if (!is_finished(coder))
-			break;
-		if (dongle->heap_len > 0 && dongle->heap[0] == coder && dongle->available)
-			break;
 		pthread_cond_wait(&dongle->cond, &dongle->lock);
 	}
-
-	if (!coder->data->sim_finished)
+	// Comprobamos de forma segura si seguimos vivos antes de actuar
+	if (is_finished(coder))
 	{
-		now = get_time_in_ms();
+		long long now = get_time_in_ms();
 		if (now < dongle->next_time_available)
 			ft_usleep(dongle->next_time_available - now, coder->data);
 		heap_pop(dongle);
 		dongle->available = 0;
 		pthread_mutex_lock(&coder->data->write_lock);
-		printf("%lld %d has taken a dongle\n",
-			get_time_in_ms() - coder->data->start, coder->id + 1);
+		printf("%lld %d has taken a dongle\n", get_time_in_ms() - coder->data->start, coder->id + 1);
 		pthread_mutex_unlock(&coder->data->write_lock);
 	}
+	else
+		heap_pop(dongle);
 	pthread_mutex_unlock(&dongle->lock);
 }
 
@@ -56,6 +60,12 @@ void	take_dongles(t_coder *coder)
 {
     t_dongle *first;
     t_dongle *second;
+
+	if (coder->ld == coder->rd)
+    {
+        request_dongle(coder->ld, coder);
+        return;
+    }
 
     if (coder->ld->id < coder->rd->id)
     {
