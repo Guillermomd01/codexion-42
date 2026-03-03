@@ -11,23 +11,13 @@ t_coder *heap_compare(t_coder *a, t_coder *b, int mode)
     {
         deadline_a = a->last_compile + a->data->t_burnout;
         deadline_b = b->last_compile + b->data->t_burnout;
-        if (deadline_a < deadline_b)
-            return (a);
-        if (deadline_a > deadline_b)
-            return (b);
+        if (deadline_a != deadline_b)
+            return (deadline_a < deadline_b ? a : b);
     }
     // 2. Lógica FIFO (First In First Out)
-    else
-    {
-        if (a->request_time < b->request_time)
-            return (a);
-        if (a->request_time > b->request_time)
-            return (b);
-    }
-    // 3. Desempate por ID (Garantiza que siempre haya un return)
-    if (a->id < b->id)
-        return (a);
-    return (b);
+    if (a->request_time != b->request_time)
+        return (a->request_time < b->request_time ? a : b);
+    return (a->id < b->id ? a : b);
 }
 
 void bubble_up(t_dongle *dongle, int index)
