@@ -45,8 +45,10 @@ int parsing(t_data *data, int ac, char **argv)
         return (-1);
     if (strcmp(argv[8], "edf") == 0)
         data->scheduler = 1;
-    else
+    else if (strcmp(argv[8], "fifo") == 0)
         data->scheduler = 0;
+    else
+        return (1);
     return (0);
 }
 
