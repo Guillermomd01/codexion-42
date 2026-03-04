@@ -13,7 +13,9 @@ int	main(int argc, char **argv)
 
 	if (parsing(&data, argc, argv) != 0)
 	{
-		printf("Use: ./codexion n_coders t_burnout t_compile t_debug t_refactor n_compiles t_cooldown scheduler\n");
+		printf("Use: ./codexion n_coders t_burnout");
+		printf("t_compile t_debug t_refactor");
+		printf("n_compiles t_cooldown scheduler\n");
 		return (1);
 	}
 	if (init_codexion(&data) != 0)
@@ -21,7 +23,8 @@ int	main(int argc, char **argv)
 	data.start = get_time_in_ms();
 	i = -1;
 	while (++i < data.n_coders)
-		pthread_create(&data.coder[i].thread, NULL, (void *)coder_routine, &data.coder[i]);
+		pthread_create(&data.coder[i].thread, NULL,
+			(void *)coder_routine, &data.coder[i]);
 	pthread_create(&monitor, NULL, monitor_routine, &data);
 	i = -1;
 	while (++i < data.n_coders)

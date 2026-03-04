@@ -1,84 +1,95 @@
-# include "codexion.h"
+#include "codexion.h"
 
 
-t_coder *heap_compare(t_coder *a, t_coder *b, int mode)
+t_coder	*heap_compare(t_coder *a, t_coder *b, int mode)
 {
-    long    deadline_a;
-    long    deadline_b;
+	long	deadline_a;
+	long	deadline_b;
 
-    // 1. Lógica EDF (Earliest Deadline First)
-    if (mode == 1)
-    {
-        deadline_a = a->last_compile + a->data->t_burnout;
-        deadline_b = b->last_compile + b->data->t_burnout;
-        if (deadline_a != deadline_b)
-            return (deadline_a < deadline_b ? a : b);
-    }
-    // 2. Lógica FIFO (First In First Out)
-    if (a->request_time != b->request_time)
-        return (a->request_time < b->request_time ? a : b);
-    return (a->id < b->id ? a : b);
+	if (mode == 1)
+	{
+		deadline_a = a->last_compile + a->data->t_burnout;
+		deadline_b = b->last_compile + b->data->t_burnout;
+		if (deadline_a != deadline_b)
+		{
+			if (deadline_a < deadline_b)
+				return (a);
+			else
+				return (b);
+		}
+	}
+	if (a->request_time != b->request_time)
+	{
+		if (a->request_time < b->request_time)
+			return (a);
+		return (b);
+	}
+	if (a->id < b->id)
+		return (a);
+	return (b);
 }
 
-void bubble_up(t_dongle *dongle, int index)
+void	bubble_up(t_dongle *dongle, int index)
 {
-    int parent;
+	int	parent;
 
-    while (index > 0)
-    {
-        parent = (index - 1) / 2;
-        if (heap_compare(dongle->heap[index], dongle->heap[parent], 
-            (int)dongle->data->scheduler) == dongle->heap[index])
-        {
-            swap(&dongle->heap[index], &dongle->heap[parent]);
-            index = parent;
-        }
-        else
-            break;
-    }
+	while (index > 0)
+	{
+		parent = (index - 1) / 2;
+		if (heap_compare(dongle->heap[index], dongle->heap[parent],
+				(int)dongle->data->scheduler) == dongle->heap[index])
+		{
+			swap(&dongle->heap[index], &dongle->heap[parent]);
+			index = parent;
+		}
+		else
+			break ;
+	}
 }
 
-void bubble_down(t_dongle *dongle, int index)
+void	bubble_down(t_dongle *dongle, int index)
 {
-    int top;
-    int left;
-    int right;
+	int	top;
+	int	left;
+	int	right;
 
-    while (1)
-    {
-        left = 2 * index + 1;
-        right = 2 * index + 2;
-        top = index;
-        if (left < dongle->heap_len && heap_compare(dongle->heap[left], 
-            dongle->heap[top], (int)dongle->data->scheduler) == dongle->heap[left])
-            top = left;
-        if (right < dongle->heap_len && heap_compare(dongle->heap[right], 
-            dongle->heap[top], (int)dongle->data->scheduler) == dongle->heap[right])
-            top = right;
-        if (top == index)
-            break;
-        swap(&dongle->heap[index], &dongle->heap[top]);
-        index = top;
-    }
+	while (1)
+	{
+		left = 2 * index + 1;
+		right = 2 * index + 2;
+		top = index;
+		if (left < dongle->heap_len && heap_compare(dongle->heap[left],
+				dongle->heap[top],
+				(int)dongle->data->scheduler) == dongle->heap[left])
+			top = left;
+		if (right < dongle->heap_len && heap_compare(dongle->heap[right],
+				dongle->heap[top],
+				(int)dongle->data->scheduler) == dongle->heap[right])
+			top = right;
+		if (top == index)
+			break ;
+		swap(&dongle->heap[index], &dongle->heap[top]);
+		index = top;
+	}
 }
 
-void heap_push(t_dongle *dongle, t_coder *coder)
+void	heap_push(t_dongle *dongle, t_coder *coder)
 {
-    dongle->heap[dongle->heap_len] = coder;
-    bubble_up(dongle, dongle->heap_len);
-    dongle->heap_len++;
+	dongle->heap[dongle->heap_len] = coder;
+	bubble_up(dongle, dongle->heap_len);
+	dongle->heap_len++;
 }
 
-t_coder *heap_pop(t_dongle *dongle)
+t_coder	*heap_pop(t_dongle *dongle)
 {
-    t_coder *top;
+	t_coder	*top;
 
-    if (dongle->heap_len == 0)
-        return (NULL);
-    top = dongle->heap[0];
-    dongle->heap[0] = dongle->heap[dongle->heap_len - 1];
-    dongle->heap_len--;
-    if (dongle->heap_len > 0)
-        bubble_down(dongle, 0);
-    return (top);
+	if (dongle->heap_len == 0)
+		return (NULL);
+	top = dongle->heap[0];
+	dongle->heap[0] = dongle->heap[dongle->heap_len - 1];
+	dongle->heap_len--;
+	if (dongle->heap_len > 0)
+		bubble_down(dongle, 0);
+	return (top);
 }

@@ -16,6 +16,7 @@ static void	stop_simulation(t_data *data)
 		pthread_mutex_unlock(&data->dongle[j].lock);
 	}
 }
+
 static int	is_dead(t_coder *coder, t_data *data)
 {
 	pthread_mutex_lock(&coder->lock);
@@ -35,10 +36,11 @@ static int	is_dead(t_coder *coder, t_data *data)
 
 void	*monitor_routine(void *arg)
 {
-	t_data	*data = (t_data *)arg;
+	t_data	*data;
 	int		i;
 	int		all_done;
 
+	data = (t_data *)arg;
 	while (1)
 	{
 		all_done = 1;
@@ -48,13 +50,15 @@ void	*monitor_routine(void *arg)
 			if (is_dead(&data->coder[i], data))
 				return (NULL);
 			pthread_mutex_lock(&data->coder[i].lock);
-			if (data->n_compiles != -1 && data->coder[i].n_compiles < data->n_compiles)
+			if (data->n_compiles != -1
+				&& data->coder[i].n_compiles < data->n_compiles)
 				all_done = 0;
 			pthread_mutex_unlock(&data->coder[i].lock);
 		}
 		pthread_mutex_lock(&data->lock);
 		if (data->n_compiles != -1 && all_done)
-			return (data->sim_finished = 1, pthread_mutex_unlock(&data->lock), NULL);
+			return (data->sim_finished = 1,
+				pthread_mutex_unlock(&data->lock), NULL);
 		pthread_mutex_unlock(&data->lock);
 		usleep(500);
 	}

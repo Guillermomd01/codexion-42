@@ -1,23 +1,25 @@
 
 
-# include "codexion.h"
-void swap(t_coder **x, t_coder **y)
-{
-    t_coder *temp;
+#include "codexion.h"
 
-    temp = *x;
-    *x = *y;
-    *y = temp;
+void	swap(t_coder **x, t_coder **y)
+{
+	t_coder	*temp;
+
+	temp = *x;
+	*x = *y;
+	*y = temp;
 }
 
 long long	get_time_in_ms(void)
 {
 	struct timeval	tv;
+
 	if (gettimeofday(&tv, NULL) == -1)
 		return (0);
-	
 	return ((long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000);
 }
+
 void	ft_usleep(size_t milliseconds, t_data *data)
 {
 	size_t	start;
