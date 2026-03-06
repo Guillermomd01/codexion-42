@@ -1,32 +1,33 @@
-#include "codexion.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heap.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gumunoz <gumunoz@student.42madrid.com      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 10:12:43 by gumunoz           #+#    #+#             */
+/*   Updated: 2026/03/06 10:12:45 by gumunoz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "codexion.h"
 
 t_coder	*heap_compare(t_coder *a, t_coder *b, int mode)
 {
-	long	deadline_a;
-	long	deadline_b;
+	long	da;
+	long	db;
 
 	if (mode == 1)
 	{
-		deadline_a = a->last_compile + a->data->t_burnout;
-		deadline_b = b->last_compile + b->data->t_burnout;
-		if (deadline_a != deadline_b)
-		{
-			if (deadline_a < deadline_b)
-				return (a);
-			else
-				return (b);
-		}
+		da = a->last_compile + a->data->t_burnout;
+		db = b->last_compile + b->data->t_burnout;
+		if (da != db)
+			return (da < db ? a : b);
 	}
+
 	if (a->request_time != b->request_time)
-	{
-		if (a->request_time < b->request_time)
-			return (a);
-		return (b);
-	}
-	if (a->id < b->id)
-		return (a);
-	return (b);
+		return (a->request_time < b->request_time ? a : b);
+	return (a->id < b->id ? a : b);
 }
 
 void	bubble_up(t_dongle *dongle, int index)

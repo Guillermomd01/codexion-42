@@ -1,21 +1,24 @@
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dongle_manager.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gumunoz <gumunoz@student.42madrid.com      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 10:12:25 by gumunoz           #+#    #+#             */
+/*   Updated: 2026/03/06 10:12:27 by gumunoz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "codexion.h"
 
 static int	can_take(t_dongle *dongle, t_coder *coder)
 {
-	long	now;
-
-	now = get_time_in_ms();
-	if (dongle->heap_len > 0 && dongle->heap[0] == coder)
-		if (dongle->available && now >= dongle->next_time_available)
-			return (1);
+	if (dongle->heap_len > 0 && dongle->heap[0] == coder && dongle->available)
+		return (1);
 	return (0);
 }
 
-// 2. Individual logic for requesting a dongle
 void	request_dongle(t_dongle *dongle, t_coder *coder)
 {
 	long long	now;
@@ -24,9 +27,7 @@ void	request_dongle(t_dongle *dongle, t_coder *coder)
 	coder->request_time = get_time_in_ms();
 	heap_push(dongle, coder);
 	while (!can_take(dongle, coder) && is_finished(coder))
-	{
 		pthread_cond_wait(&dongle->cond, &dongle->lock);
-	}
 	if (is_finished(coder))
 	{
 		now = get_time_in_ms();
@@ -60,6 +61,13 @@ void	take_dongles(t_coder *coder)
 	t_dongle	*first;
 	t_dongle	*second;
 
+	if (coder->ld == coder->rd)
+	{
+		request_dongle(coder->ld, coder);
+		while (is_finished(coder))
+			usleep(1000);
+		return ;
+	}
 	if (coder->ld->id < coder->rd->id)
 	{
 		first = coder->ld;

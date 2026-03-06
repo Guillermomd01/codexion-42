@@ -1,5 +1,16 @@
-#include "codexion.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   monitor.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gumunoz <gumunoz@student.42madrid.com      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 10:12:59 by gumunoz           #+#    #+#             */
+/*   Updated: 2026/03/06 10:13:01 by gumunoz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "codexion.h"
 
 static void	stop_simulation(t_data *data)
 {
@@ -33,6 +44,7 @@ static int	is_dead(t_coder *coder, t_data *data)
 	pthread_mutex_unlock(&coder->lock);
 	return (0);
 }
+
 
 void	*monitor_routine(void *arg)
 {

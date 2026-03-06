@@ -1,7 +1,14 @@
-
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gumunoz <gumunoz@student.42madrid.com      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/06 10:13:15 by gumunoz           #+#    #+#             */
+/*   Updated: 2026/03/06 10:13:17 by gumunoz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "codexion.h"
 
@@ -23,11 +30,11 @@ void	coder_routine(t_coder *coder)
 	coder->last_compile = coder->data->start;
 	pthread_mutex_unlock(&coder->lock);
 	if (coder->id % 2 != 0)
-		ft_usleep(50, coder->data);
+		ft_usleep(10, coder->data);
 	while (is_finished(coder))
 	{
 		pthread_mutex_lock(&coder->lock);
-		if (coder->n_compiles == coder->data->n_compiles)
+		if (coder->data->n_compiles != -1 && coder->n_compiles >= coder->data->n_compiles)
 		{
 			pthread_mutex_unlock(&coder->lock);
 			break ;
