@@ -22,12 +22,21 @@ t_coder	*heap_compare(t_coder *a, t_coder *b, int mode)
 		da = a->last_compile + a->data->t_burnout;
 		db = b->last_compile + b->data->t_burnout;
 		if (da != db)
-			return (da < db ? a : b);
+		{
+			if (da < db)
+				return (a);
+			return (b);
+		}
 	}
-
 	if (a->request_time != b->request_time)
-		return (a->request_time < b->request_time ? a : b);
-	return (a->id < b->id ? a : b);
+	{
+		if (a->request_time < b->request_time)
+			return (a);
+		return (b);
+	}
+	if (a->id < b->id)
+		return (a);
+	return (b);
 }
 
 void	bubble_up(t_dongle *dongle, int index)

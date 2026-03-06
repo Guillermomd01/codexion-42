@@ -45,6 +45,18 @@ static int	is_dead(t_coder *coder, t_data *data)
 	return (0);
 }
 
+static int	check_all_done(t_data *data, int all_done)
+{
+	pthread_mutex_lock(&data->lock);
+	if (data->n_compiles != -1 && all_done)
+	{
+		data->sim_finished = 1;
+		pthread_mutex_unlock(&data->lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&data->lock);
+	return (0);
+}
 
 void	*monitor_routine(void *arg)
 {
@@ -59,19 +71,16 @@ void	*monitor_routine(void *arg)
 		i = -1;
 		while (++i < data->n_coders)
 		{
-			if (is_dead(&data->coder[i], data))
-				return (NULL);
 			pthread_mutex_lock(&data->coder[i].lock);
-			if (data->n_compiles != -1
-				&& data->coder[i].n_compiles < data->n_compiles)
+			if (data->n_compiles == -1
+				|| data->coder[i].n_compiles < data->n_compiles)
 				all_done = 0;
 			pthread_mutex_unlock(&data->coder[i].lock);
+			if (!all_done && is_dead(&data->coder[i], data))
+				return (NULL);
 		}
-		pthread_mutex_lock(&data->lock);
-		if (data->n_compiles != -1 && all_done)
-			return (data->sim_finished = 1,
-				pthread_mutex_unlock(&data->lock), NULL);
-		pthread_mutex_unlock(&data->lock);
+		if (check_all_done(data, all_done))
+			return (NULL);
 		usleep(500);
 	}
 }

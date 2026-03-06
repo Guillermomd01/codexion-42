@@ -34,7 +34,8 @@ void	coder_routine(t_coder *coder)
 	while (is_finished(coder))
 	{
 		pthread_mutex_lock(&coder->lock);
-		if (coder->data->n_compiles != -1 && coder->n_compiles >= coder->data->n_compiles)
+		if (coder->data->n_compiles != -1
+			&& coder->n_compiles >= coder->data->n_compiles)
 		{
 			pthread_mutex_unlock(&coder->lock);
 			break ;
