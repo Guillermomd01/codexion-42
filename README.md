@@ -2,7 +2,7 @@
 # Codexion - 42 Project
 
 ## Descripción
-**Codexion** es una simulación de concurrencia multihilo inspirada en el clásico "Problema de los Filósofos Comensales". El objetivo es gestionar un ecosistema donde múltiples programadores compiten por recursos limitados (dongles) para realizar tareas de compilación antes de que expire su tiempo de vida (*burnout*).
+**Codexion** es una simulación de concurrencia multihilo inspirada en el clásico "Problema de los Filósofos". El objetivo es gestionar un ecosistema donde múltiples programadores compiten por recursos limitados (dongles) para realizar tareas de compilación antes de que expire su tiempo de vida (*burnout*).
 
 El proyecto implementa un planificador de tareas con dos modos de prioridad: **FIFO** (First In, First Out) y **EDF** (Earliest Deadline First), utilizando una estructura de montículo binario (*binary heap*) para garantizar que los programadores más críticos reciban los recursos primero.
 
